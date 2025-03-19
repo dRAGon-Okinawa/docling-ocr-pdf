@@ -1,4 +1,5 @@
 # Reference: https://cog.run/yaml
+image: "r8.im/dragon-okinawa/docling-ocr-pdf"
 build:
   # This model requires a GPU
   gpu: true
