@@ -30,7 +30,7 @@ class Predictor(BasePredictor):
                 "--from", from_format,
                 "--to", to_format,
                 "--image-export-mode", "placeholder",
-                "--document-timeout", timeout,
+                "--document-timeout", str(timeout),
                 "--output", "/opt/docling/output",
                 document
             ],
