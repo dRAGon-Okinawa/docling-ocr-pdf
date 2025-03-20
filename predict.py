@@ -20,7 +20,11 @@ class Predictor(BasePredictor):
     ) -> list[Path]:
         """Run a single prediction on the model"""
         print("Docling will work on :", document)
-        print("Docling will output to : /opt/docling/output")
+        
+        # Create the output directory
+        output_dir = "/tmp/docling_output"
+        Path(output_dir).mkdir(parents=True, exist_ok=True)
+        print("Docling will output to :", output_dir)
 
         # Prepare docling arguments :
         docling_args = [
@@ -29,7 +33,7 @@ class Predictor(BasePredictor):
             "--to", to_format,
             "--image-export-mode", "placeholder",
             "--document-timeout", str(timeout),
-            "--output", "/opt/docling/output",
+            "--output", output_dir,
             "--artifacts-path", "/opt/docling/models"
         ]
 
@@ -51,7 +55,7 @@ class Predictor(BasePredictor):
 
         # Searching for the output files inside the output directory
         output_files = []
-        for file in Path("/opt/docling/output").iterdir():
+        for file in Path(output_dir).iterdir():
             if file.is_file():
                 # If file contains a space in its name, replace it with an underscore
                 if " " in file.name:
