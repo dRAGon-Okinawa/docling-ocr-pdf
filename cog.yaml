@@ -17,7 +17,6 @@ build:
 
   # Commands run after the environment is setup
   run:
-    - mkdir -p /opt/docling/output
     - mkdir -p /opt/docling/models
     - HF_HUB_DOWNLOAD_TIMEOUT=300 HF_HUB_ETAG_TIMEOUT=300 docling-tools models download --all --output-dir /opt/docling/models
 
