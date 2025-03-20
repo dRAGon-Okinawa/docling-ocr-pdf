@@ -15,10 +15,6 @@ class Predictor(BasePredictor):
             description="Input document format", default="pdf", choices=["docx", "pptx", "html", "image", "pdf", "asciidoc", "md", "csv", "xlsx", "xml_uspto", "xml_jats", "json_docling"]),
         to_format: str = Input(
             description="Output document format", default="md", choices=["md", "json", "html", "text", "doctags"]),
-        pipeline: str = Input(
-            description="Pipeline to process PDF or image files", default="standard", choices=["standard", "vlm"]),
-        vlm_model: str = Input(
-            description="VLM model to use (only for VLM pipeline)", default="NONE", choices=["NONE", "smoldocling", "granite_vision"]),
         timeout: int = Input(
             description="Maximum time allowed to run the prediction in seconds", default=120, ge=30, le=3600)
     ) -> list[Path]:
@@ -36,17 +32,6 @@ class Predictor(BasePredictor):
             "--output", "/opt/docling/output",
             "--artifacts-path", "/opt/docling/models"
         ]
-        
-        # Specify the pipeline to use
-        docling_args.extend(["--pipeline", pipeline])
-
-        # Arguments based on the pipeline
-        if pipeline == "vlm":
-            # Throw an error if the VLM model is not specified
-            if vlm_model == "NONE":
-                raise ValueError(
-                    "VLM model must be specified when using the VLM pipeline")
-            docling_args.extend(["--vlm-model", vlm_model])
 
         # Append document argument
         docling_args.append(document)
