@@ -32,5 +32,6 @@ cog predict -i document=@tests/resources/Optical_character_recognition.pdf
 ## Deploy to Replicate
 ```bash
 cog login
+cog build --tag r8.im/dragon-okinawa/docling-ocr-pdf:latest
 cog push r8.im/dragon-okinawa/docling-ocr-pdf
 ```
