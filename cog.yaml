@@ -18,8 +18,10 @@ build:
   # Commands run after the environment is setup
   run:
     - mkdir -p /opt/docling/output
-    - |
-      [ -z "$(ls -A /opt/docling/models 2>/dev/null)" ] && mkdir -p /opt/docling/models && docling-tools models download --output-dir /opt/docling/models || echo "Directory is not empty. Skipping models download."
+    - mkdir -p /opt/docling/models/standard
+    - mkdir -p /opt/docling/models/smolvlm
+    - docling-tools models download --output-dir /opt/docling/models/standard
+    - docling-tools models download smolvlm --output-dir /opt/docling/models/smolvlm
 
 # predict.py defines how predictions are run on model
 predict: "predict.py:Predictor"

@@ -12,9 +12,13 @@ class Predictor(BasePredictor):
         self,
         document: Path = Input(description="Document to process"),
         from_format: str = Input(
-            description="Input format of the document", default="pdf", choices=["docx", "pptx", "html", "image", "pdf", "asciidoc", "md", "csv", "xlsx", "xml_uspto", "xml_jats", "json_docling"]),
+            description="Input document format", default="pdf", choices=["docx", "pptx", "html", "image", "pdf", "asciidoc", "md", "csv", "xlsx", "xml_uspto", "xml_jats", "json_docling"]),
         to_format: str = Input(
-            description="Output format of the document", default="md", choices=["md", "json", "html", "text", "doctags"]),
+            description="Output document format", default="md", choices=["md", "json", "html", "text", "doctags"]),
+        pipeline: str = Input(
+            description="Pipeline to process PDF or image files", default="standard", choices=["standard", "vlm"]),
+        vlm_model: str = Input(
+            description="VLM model to use (only for VLM pipeline)", default="smoldocling", choices=["", "smoldocling", "granite_vision"]),
         timeout: int = Input(
             description="Maximum time allowed to run the prediction in seconds", default=120, ge=30, le=3600)
     ) -> list[Path]:
@@ -22,27 +26,53 @@ class Predictor(BasePredictor):
         print("Docling will work on :", document)
         print("Docling will output to : /opt/docling/output")
 
-        # Launch command (system call)
+        # Prepare docling arguments :
+        docling_args = [
+            "docling",
+            "--from", from_format,
+            "--to", to_format,
+            "--image-export-mode", "placeholder",
+            "--document-timeout", str(timeout),
+            "--output", "/opt/docling/output"
+        ]
+        
+        # Specify the pipeline to use
+        docling_args.extend(["--pipeline", pipeline])
+
+        # Arguments based on the pipeline
+        if pipeline == "vlm":
+            # Throw an error if the VLM model is not specified
+            if vlm_model == "":
+                raise ValueError(
+                    "VLM model must be specified when using the VLM pipeline")
+            docling_args.extend(["--vlm-model", vlm_model])
+            docling_args.extend(
+                ["--artifacts-path", "/opt/docling/models/smolvlm"])
+        else:
+            docling_args.extend(
+                ["--artifacts-path", "/opt/docling/models/standard"])
+
+        # Append document argument
+        docling_args.append(document)
+
+        # Show the docling command and arguments
+        print("Docling command to be used :", docling_args)
+
+        # Print that we are starting the docling command
+        print("Starting docling...")
+
+        # Launch docling command (system call)
         subprocess.run(
-            [
-                "docling",
-                "--artifacts-path", "/opt/docling/models",
-                "--from", from_format,
-                "--to", to_format,
-                "--image-export-mode", "placeholder",
-                "--document-timeout", str(timeout),
-                "--output", "/opt/docling/output",
-                document
-            ],
+            docling_args,
             timeout=timeout,  # Command timeout in seconds
             check=True  # Raise exception if the command returns a non-zero exit code
         )
-        
+
         # Searching for the output files inside the output directory
         output_files = []
         for file in Path("/opt/docling/output").iterdir():
             if file.is_file():
                 output_files.append(Path(file))
-                
+
         # Return the output files
         return output_files
