@@ -53,7 +53,13 @@ class Predictor(BasePredictor):
         output_files = []
         for file in Path("/opt/docling/output").iterdir():
             if file.is_file():
-                output_files.append(Path(file))
+                # If file contains a space in its name, replace it with an underscore
+                if " " in file.name:
+                    new_name = file.name.replace(" ", "_")
+                    file.rename(file.with_name(new_name))
+                    output_files.append(Path(file.with_name(new_name)))
+                else:
+                    output_files.append(Path(file))
 
         # Return the output files
         return output_files
