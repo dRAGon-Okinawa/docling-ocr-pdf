@@ -18,7 +18,7 @@ class Predictor(BasePredictor):
         pipeline: str = Input(
             description="Pipeline to process PDF or image files", default="standard", choices=["standard", "vlm"]),
         vlm_model: str = Input(
-            description="VLM model to use (only for VLM pipeline)", default="smoldocling", choices=["", "smoldocling", "granite_vision"]),
+            description="VLM model to use (only for VLM pipeline)", default="NONE", choices=["NONE", "smoldocling", "granite_vision"]),
         timeout: int = Input(
             description="Maximum time allowed to run the prediction in seconds", default=120, ge=30, le=3600)
     ) -> list[Path]:
@@ -43,7 +43,7 @@ class Predictor(BasePredictor):
         # Arguments based on the pipeline
         if pipeline == "vlm":
             # Throw an error if the VLM model is not specified
-            if vlm_model == "":
+            if vlm_model == "NONE":
                 raise ValueError(
                     "VLM model must be specified when using the VLM pipeline")
             docling_args.extend(["--vlm-model", vlm_model])
