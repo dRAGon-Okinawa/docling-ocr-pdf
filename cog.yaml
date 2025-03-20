@@ -18,10 +18,8 @@ build:
   # Commands run after the environment is setup
   run:
     - mkdir -p /opt/docling/output
-    - mkdir -p /opt/docling/models/standard
-    - mkdir -p /opt/docling/models/smolvlm
-    - docling-tools models download --output-dir /opt/docling/models/standard
-    - docling-tools models download smolvlm --output-dir /opt/docling/models/smolvlm
+    - mkdir -p /opt/docling/models
+    - docling-tools models download --all --output-dir /opt/docling/models/standard
 
 # predict.py defines how predictions are run on model
 predict: "predict.py:Predictor"

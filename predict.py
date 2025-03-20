@@ -33,7 +33,8 @@ class Predictor(BasePredictor):
             "--to", to_format,
             "--image-export-mode", "placeholder",
             "--document-timeout", str(timeout),
-            "--output", "/opt/docling/output"
+            "--output", "/opt/docling/output",
+            "--artifacts-path", "/opt/docling/models"
         ]
         
         # Specify the pipeline to use
@@ -46,11 +47,6 @@ class Predictor(BasePredictor):
                 raise ValueError(
                     "VLM model must be specified when using the VLM pipeline")
             docling_args.extend(["--vlm-model", vlm_model])
-            docling_args.extend(
-                ["--artifacts-path", "/opt/docling/models/smolvlm"])
-        else:
-            docling_args.extend(
-                ["--artifacts-path", "/opt/docling/models/standard"])
 
         # Append document argument
         docling_args.append(document)
