@@ -24,9 +24,15 @@ class Predictor(BasePredictor):
         # Create the output directory
         output_dir = "/tmp/docling_output"
         Path(output_dir).mkdir(parents=True, exist_ok=True)
-        print("Docling will output to :", output_dir)
+        print("Docling will output files to :", output_dir)
+        
+        # Clean all files (if any) in the output directory
+        print("Cleaning the output directory...")
+        for file in Path(output_dir).iterdir():
+            if file.is_file():
+                file.unlink()
 
-        # Prepare docling arguments :
+        # Prepare docling arguments
         docling_args = [
             "docling",
             "--from", from_format,
@@ -64,6 +70,12 @@ class Predictor(BasePredictor):
                     output_files.append(Path(file.with_name(new_name)))
                 else:
                     output_files.append(Path(file))
+
+        # Print the output files
+        print("Output files are :", output_files)
+        
+        # Print see you later
+        print("See you later!")
 
         # Return the output files
         return output_files
