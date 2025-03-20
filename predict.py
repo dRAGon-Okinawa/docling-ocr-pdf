@@ -1,5 +1,6 @@
 # https://cog.run/python
 import subprocess
+import uuid
 from cog import BasePredictor, Input, Path
 
 
@@ -20,12 +21,12 @@ class Predictor(BasePredictor):
     ) -> list[Path]:
         """Run a single prediction on the model"""
         print("Docling will work on :", document)
-        
+
         # Create the output directory
         output_dir = "/tmp/docling_output"
         Path(output_dir).mkdir(parents=True, exist_ok=True)
         print("Docling will output files to :", output_dir)
-        
+
         # Clean all files (if any) in the output directory
         print("Cleaning the output directory...")
         for file in Path(output_dir).iterdir():
@@ -63,17 +64,14 @@ class Predictor(BasePredictor):
         output_files = []
         for file in Path(output_dir).iterdir():
             if file.is_file():
-                # If file contains a space in its name, replace it with an underscore
-                if " " in file.name:
-                    new_name = file.name.replace(" ", "_")
-                    file.rename(file.with_name(new_name))
-                    output_files.append(Path(file.with_name(new_name)))
-                else:
-                    output_files.append(Path(file))
+                # Rename file using UUID
+                new_name = str(uuid.uuid4()) + file.suffix
+                file.rename(file.with_name(new_name))
+                output_files.append(Path(file.with_name(new_name)))
 
         # Print the output files
         print("Output files are :", output_files)
-        
+
         # Print see you later
         print("See you later!")
 
