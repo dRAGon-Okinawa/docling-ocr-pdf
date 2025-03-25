@@ -13,7 +13,7 @@ class Predictor(BasePredictor):
         self,
         document: Path = Input(description="Document to process"),
         from_format: str = Input(
-            description="Input document format", default="pdf", choices=["docx", "pptx", "html", "image", "pdf", "asciidoc", "md", "csv", "xlsx", "xml_uspto", "xml_jats", "json_docling"]),
+            description="Input document format", default="any", choices=["any", "docx", "pptx", "html", "image", "pdf", "asciidoc", "md", "csv", "xlsx", "xml_uspto", "xml_jats", "json_docling"]),
         to_format: str = Input(
             description="Output document format", default="md", choices=["md", "json", "html", "text", "doctags"]),
         timeout: int = Input(
@@ -36,13 +36,16 @@ class Predictor(BasePredictor):
         # Prepare docling arguments
         docling_args = [
             "docling",
-            "--from", from_format,
             "--to", to_format,
             "--image-export-mode", "placeholder",
             "--document-timeout", str(timeout),
             "--output", output_dir,
             "--artifacts-path", "/opt/docling/models"
         ]
+        
+        # Append from_format argument if not "any"
+        if from_format != "any":
+            docling_args.extend(["--from", from_format])
 
         # Append document argument
         docling_args.append(document)
