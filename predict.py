@@ -74,6 +74,10 @@ class Predictor(BasePredictor):
 
         # Print the output files
         print("Output files are :", output_files)
+        
+        # If no output files are found, raise an exception
+        if len(output_files) == 0:
+            raise Exception("No output files found!")
 
         # Print see you later
         print("See you later!")
